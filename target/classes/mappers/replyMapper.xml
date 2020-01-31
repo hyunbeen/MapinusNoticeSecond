@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.zerock.mapper.ReplyMapper">
+
+	<select id="replyListPart" resultType="org.zerock.domain.ReplyVO">
+		select
+		*
+		from
+		"Review"
+		where n_num =
+		#{n_num}
+		order by r_group asc,r_order asc
+		limit #{re_page_end} offset #{re_page_start};
+	</select>
+
+	<select id="replyListSize" resultType="org.zerock.domain.ReplyVO">
+		select
+		*
+		from
+		"Review"
+		where n_num =
+		#{n_num}
+		order by r_date desc;
+	</select>
+<!-- 댓글이 등록될때는 r_order 댓글 레벨은 처음 1이고 자식댓글이 없으므로 r_child는 0  상위 부모에 의해 삭제 된적이 없으니 r_delete 값은 0이다 -->
+	<insert id="replyCreate" parameterType="hashMap">
+		insert into "Review"
+		(r_num,n_num,r_content,r_date,r_user,r_group,r_order,r_child,r_delete)
+		values
+		(nextval('review_seq'),#{n_num},#{replyVO.r_content},current_timestamp,#{replyVO.r_user},nextval('group_seq'),1,0,0);
+	</insert>
+
+	<update id="replyUpdate">
+		update "Review" set r_content = #{r_content}
+		where
+		r_num = #{r_num};
+	</update>
+<!-- 삭제된 글의 댓글을 표시하기 위해서 자식 댓글의 r_delete값이 업데이트 된다 -->
+	<update id="replyUpdateDelete" parameterType="hashMap">
+		update "Review" set
+		r_delete = 1
+		where r_group between ${start} and ${end} and r_group !=
+		${end};
+	</update>
+
+	<delete id="replyDelete" parameterType="hashMap">
+		delete from "Review" where
+		r_group = ${start};
+	</delete>
+
+	<select id="replyFindOne" parameterType="org.zerock.domain.ReplyVO"
+		resultType="org.zerock.domain.ReplyVO">
+		select
+		*
+		from
+		"Review"
+		where r_num =
+		#{r_num}
+	</select>
+<!-- 댓글의 댓글은 계산된 그룹값이 입력되고 자식댓글이 없고 부모댓글이 삭제 되었지 않기 때문에 r_child 와 r_delete값은 0이다 -->
+	<insert id="replyCreateGroup"
+		parameterType="org.zerock.domain.ReplyVO">
+		insert into "Review"
+		(r_num,n_num,r_content,r_date,r_user,r_group,r_order,r_child,r_delete)
+		values
+		(nextval('review_seq'),#{n_num},#{r_content},current_timestamp,#{r_user},#{r_group},#{r_order},0,0);
+	</insert>
+
+	<update id="replyChildUpdate">
+		update "Review" set r_child = r_child+1
+		where r_num =
+		#{r_num};
+	</update>
+
+</mapper>
+

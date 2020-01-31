@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.zerock.mapper.FileMapper">
+
+
+	<select id="selectFile" parameterType="Integer"
+		resultType="org.zerock.domain.UploadVO">
+		select
+		*
+		from
+		"File"
+		where n_num =
+		#{n_num}
+		order by f_date asc; 
+	</select>
+
+	<!-- 기존 첨부파일중 체크 되지 않은 것들 삭제 -->
+	<delete id="fileBaseDelete">
+		delete
+		from
+		"File"
+		where f_num = #{f_num};
+	</delete>
+
+	<insert id="fileCreate">
+		insert into "File"
+		values(nextval('file_seq'),#{f_origin},#{f_server},#{f_size},current_timestamp,#{n_num})
+	</insert>
+</mapper>
+
+ 

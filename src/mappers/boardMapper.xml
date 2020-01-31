@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.zerock.mapper.BoardMapper">
+
+	<insert id="boardBaseCreate">
+		insert into "Notice"
+		values(nextval('notice_seq'),'','',0,'',current_timestamp)
+	</insert>
+
+	<select id="boardRead" resultType="org.zerock.domain.BoardVO">
+		select
+		*
+		from
+		"Notice"
+		where n_num =
+		#{n_num}
+	</select>
+	
+	<update id="boardUpdate">
+		update "Notice" set n_title =#{n_title}, n_content
+		=#{n_content}
+		where n_num = #{n_num}
+	</update>
+	
+	<update id="boardInsert">
+		update "Notice" set n_title =#{n_title}, n_content
+		=#{n_content},n_user =#{n_user}
+		where n_num = (select max(n_num) from "Notice");
+	</update>
+	
+<!-- 	조회수 업데이트 -->
+	<update id="boardUpdateCount">
+		update "Notice" set n_count = n_count + 1
+		where n_num
+		= #{n_num}
+	</update>
+
+
+	<delete id="boardDelete">
+		delete from "Notice" where n_num = #{n_num}
+	</delete>
+
+	<select id="boardListSize" parameterType="hashMap"
+		resultType="org.zerock.domain.BoardVO">
+
+		select
+		*
+		from
+		"Notice"
+		order by n_date desc
+
+	</select>
+
+	<select id="boardListPart" parameterType="hashMap"
+		resultType="org.zerock.domain.BoardVO">
+
+		select
+		*
+		from
+		"Notice"
+		order by n_date desc
+		limit #{page_end} offset #{page_start};
+
+	</select>
+
+	<select id="boardSearchListPart" parameterType="hashMap"
+		resultType="org.zerock.domain.BoardVO">
+
+		select
+		*
+		from
+		"Notice"
+		where ${search_cond} like '%${search_word}%'
+		order by n_date desc
+		limit #{search_page_end} offset #{search_page_start};
+
+	</select>
+
+	<select id="boardSearchListSize" parameterType="hashMap"
+		resultType="org.zerock.domain.BoardVO">
+
+		select
+		*
+		from
+		"Notice"
+		where ${search_cond} like '%${search_word}%'
+		order by n_date desc;
+
+	</select>
+<!-- 최근 입력된 글의 번호를 알아오기 위해서 -->
+	<select id="boardSelectKey" resultType="Integer">
+
+		select max(n_num) from "Notice";
+
+	</select>
+
+
+
+</mapper>

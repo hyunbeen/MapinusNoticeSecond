@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/mvc"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+	<annotation-driven />
+	
+	<!-- jsp mapping 보다 우선권을 주어 downloadservice로 매핑 시킨다  -->
+	<beans:bean id="fileViewResolver" class="org.springframework.web.servlet.view.BeanNameViewResolver">
+    	<beans:property name="order" value="0" />
+	</beans:bean>
+
+	<!-- View단의 mapping  -->
+	<beans:bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<beans:property name="prefix" value="/WEB-INF/views/" />
+		<beans:property name="suffix" value=".jsp" />
+		<beans:property name="order" value="1" />
+	</beans:bean>
+	
+	<!-- 파일 업로드  -->
+    <beans:bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <!-- max upload size in bytes -->
+        <beans:property name="maxUploadSize" value="5242880" /> <!-- 5MB -->
+        <!-- max size of file in memory (in bytes) -->
+        <beans:property name="maxInMemorySize" value="1048576" /> <!-- 1MB -->
+    </beans:bean>
+    
+	<!-- 컨트롤러,서비스,레파지토리 빈즈 객체 생성 -->
+    <context:component-scan
+		base-package="org.zerock.persistence"></context:component-scan>
+	<context:component-scan
+		base-package="org.zerock.service"></context:component-scan>
+	<context:component-scan
+		base-package="org.zerock.controller"></context:component-scan>
+	    
+    <!-- VO객체  -->
+    <beans:bean id="vo" class="org.zerock.domain.ReplyVO" />
+	<beans:bean id="newVO" class="org.zerock.domain.ReplyVO" />
+	<beans:bean id="selectVO" class="org.zerock.domain.ReplyVO" />
+	<beans:bean id="parentVO" class="org.zerock.domain.ReplyVO" />
+	<beans:bean id="voReply" class="org.zerock.domain.ReplyVO" />
+	<beans:bean id="replyDeleteVO" class="org.zerock.domain.ReplyVO" />
+    <beans:bean id="uploadFile" class="org.zerock.domain.UploadVO" />
+	<beans:bean id="uVOVO" class="org.zerock.domain.UploadVO" />
+ 	
+</beans:beans>
